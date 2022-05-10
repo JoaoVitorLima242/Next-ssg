@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 
 const Home: NextPage = ({ org }: any) => {
@@ -11,13 +11,15 @@ const Home: NextPage = ({ org }: any) => {
       </Head>
 
       <main>
-        <h1>Hello World</h1>
+        <h1>{org?.login}</h1>
+        <h3>{org?.description}</h3>
+        <p>Site: <a href={org?.blog}>{org?.blog}</a></p>
       </main>
     </div>
   )
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   
   const response = await fetch('https://api.github.com/orgs/rocketseat');
   const data = await response.json();
@@ -25,7 +27,8 @@ export const getStaticProps = async () => {
   return {
     props: {
       org: data
-    }
+    },
+    revalidate: 10, //Tempo de renderizacao
   }
 };
 
