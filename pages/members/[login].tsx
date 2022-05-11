@@ -1,9 +1,16 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router"
-import { userInfo } from "os";
+import { useRouter } from "next/router";
 
 export default function Member({ user }: any) {
-    const { query } = useRouter();
+    const { isFallback } = useRouter();
+
+    if(isFallback) {
+        return(
+            <div>
+                Carregando...
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -14,9 +21,18 @@ export default function Member({ user }: any) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
 
+    const response = await fetch('https://api.github.com/orgs/rocketseat/members');
+    const data = await response.json();
+
+    console.log(data)
+
+    const paths = data?.map((member: any) => {
+        return {params: {login: member.login}}
+    });
+
     return {
-        paths: [],
-        fallback: false,
+        paths,
+        fallback: true, 
     }
 } 
 
